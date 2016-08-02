@@ -27,7 +27,7 @@ public class WaterFullView extends ScrollView{
     private int columnWidth;
     private boolean isOneLoad;
     private int pager;
-    private int pagerSize=20;
+    private int pagerSize=10;
     private String[] imageUrls;
     private ImageLoad imageLoad;
     private List<ImageView> iamgeViewList=new ArrayList<>();
