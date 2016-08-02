@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -23,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 public class Utils {
 
     private static String path;
+    private static Toast toast;
 
     /**
      * 获取本地缓存路径
@@ -139,5 +141,17 @@ public class Utils {
         }
         options.inJustDecodeBounds=false;
         return BitmapFactory.decodeFileDescriptor(fileDescriptor,null,options);
+    }
+    /**
+     * 封装的toast
+     */
+    public static void myToast(Context context,String s){
+        if (toast==null) {
+            toast = Toast.makeText(context, s, Toast.LENGTH_SHORT);
+//            toast.show();
+        }else {
+            toast.setText(s);
+        }
+        toast.show();
     }
 }

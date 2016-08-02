@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">waterfull</string>
+    <string name="top">0</string>
+    <string name="bottom">1</string>
+    <string name="url">2</string>
 </resources>

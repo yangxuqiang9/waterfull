@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class ImageBean {
     public static String[] images={
+            "http://zhuangbi.idagou.com/i/2016-05-26-2ae0ee1e98334d1aef50666d7638095c.gif?",
             "http://zhuangbi.idagou.com/i/2015-07-28-a5a7b2aa6df0c79541d5c77c05fd5733.jpg",
             "http://zhuangbi.idagou.com/i/2015-08-01-995f0e62a52d0515e28b043e8f28aa5b.jpg",
             "http://zhuangbi.idagou.com/i/2016-08-01-8698411ca95ed188b0030df0248d56d7.jpg?",
@@ -73,4 +74,5 @@ public class ImageBean {
             "http://zhuangbi.idagou.com/i/2016-05-21-5778eafcb600615a3523622be86dcebd.jpg?",
             "http://zhuangbi.idagou.com/i/2016-05-21-a3cc5297dd905062107a2845040b1b19.jpg?",
     };
+
 }

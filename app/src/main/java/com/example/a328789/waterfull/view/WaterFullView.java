@@ -4,14 +4,16 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Toast;
 
 import com.example.a328789.waterfull.R;
 import com.example.a328789.waterfull.bean.ImageBean;
 import com.example.a328789.waterfull.service.ImageLoad;
+import com.example.a328789.waterfull.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,7 +23,7 @@ import java.util.Set;
 /**
  * Created by 328789 on 2016/7/29.
  */
-public class WaterFullView extends ScrollView{
+public class WaterFullView extends ScrollView implements View.OnTouchListener {
 
     private Set<LoadImageTask> taskSet;
     private int columnWidth;
@@ -35,6 +37,7 @@ public class WaterFullView extends ScrollView{
     private int secondColumnHerght;
     private LinearLayout fristColumn;
     private LinearLayout secondColumn;
+    private int endx;
 
     public WaterFullView(Context context) {
         super(context);
@@ -59,6 +62,7 @@ public class WaterFullView extends ScrollView{
         imageLoad = ImageLoad.getInstace(context);
         taskSet = new HashSet<>();
         imageUrls = ImageBean.images;
+        this.setOnTouchListener(this);
     }
 
     @Override
@@ -70,7 +74,6 @@ public class WaterFullView extends ScrollView{
             secondColumn = (LinearLayout) findViewById(R.id.second_column);
             //获取单列宽
             columnWidth = fristColumn.getWidth();
-
             //加载图片
             loadImage();
         }
@@ -86,7 +89,8 @@ public class WaterFullView extends ScrollView{
             if(endIndex>imageUrls.length){
                 endIndex=imageUrls.length;
             }
-            for (int i=startIndex;i<=endIndex;i++){
+            Utils.myToast(getContext(),"加载图片中");
+            for (int i=startIndex;i<endIndex;i++){
                 //开启异步线程加载图片
                 LoadImageTask loadImageTask = new LoadImageTask();
                 taskSet.add(loadImageTask);
@@ -94,9 +98,11 @@ public class WaterFullView extends ScrollView{
             }
             pager++;
         }else {
-            Toast.makeText(getContext(),"图片加载完了",Toast.LENGTH_LONG).show();
+//            Toast.makeText(getContext(),"图片加载完了",Toast.LENGTH_LONG).show();
+            Utils.myToast(getContext(),"图片加载完了");
         }
     }
+
 
     /**
      * 加载图片的异步线程
@@ -125,9 +131,10 @@ public class WaterFullView extends ScrollView{
                 imageView.setImageBitmap(bitmap);
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 imageView.setPadding(5,5,5,5);
-//                imageView.setTag(0,url);
+                imageView.setTag(R.string.url,url);
                 //放倒最短的一列中
-                findShortColumn(scaleHeight,imageView).addView(imageView);
+                LinearLayout shortColumn = findShortColumn(scaleHeight, imageView);
+                shortColumn.addView(imageView);
                 iamgeViewList.add(imageView);
             }
             taskSet.remove(this);
@@ -141,12 +148,54 @@ public class WaterFullView extends ScrollView{
          */
         private LinearLayout findShortColumn(int scaleHeight, ImageView imageView) {
             if(fristColumnHeight<=secondColumnHerght){
+                imageView.setTag(R.string.top,fristColumnHeight);
                 fristColumnHeight+=scaleHeight;
+                imageView.setTag(R.string.bottom,fristColumnHeight);
                 return fristColumn;
             }else {
+                imageView.setTag(R.string.top,secondColumnHerght);
                 secondColumnHerght+=scaleHeight;
+                imageView.setTag(R.string.bottom,secondColumnHerght);
                 return secondColumn;
             }
         }
     }
+    private int startx=0;
+    private int starty=0;
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                startx = (int) event.getRawX();
+                starty = (int) event.getRawY();
+                break;
+
+            case MotionEvent.ACTION_UP:
+                int endx= (int) event.getRawX();
+                int endy= (int) event.getRawY();
+                int diffx=Math.abs(endx-startx);
+                int diffy=Math.abs(endy-starty);
+                if(diffy>diffx&&endy<starty){
+                    isScrollFoot();
+                }
+                break;
+        }
+        return false;
+    }
+    private void isScrollFoot(){
+        int top=0;
+        int bottom=0;
+        for(ImageView view:iamgeViewList){
+            top=(Integer)view.getTag(R.string.top);
+            bottom=(Integer)view.getTag(R.string.bottom);
+            int scrollY = getScrollY()+getHeight();
+            if(getScrollY()<bottom){
+                loadImage();
+                return;
+            }
+        }
+
+    }
+
 }
