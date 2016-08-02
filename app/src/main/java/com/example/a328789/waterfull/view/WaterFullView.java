@@ -108,7 +108,9 @@ public class WaterFullView extends ScrollView{
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
+            if(bitmap!=null){
 
+            }
         }
     }
 }
