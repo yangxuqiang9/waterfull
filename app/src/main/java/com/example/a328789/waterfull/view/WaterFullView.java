@@ -3,7 +3,10 @@ package com.example.a328789.waterfull.view;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -38,6 +41,8 @@ public class WaterFullView extends ScrollView implements View.OnTouchListener {
     private LinearLayout fristColumn;
     private LinearLayout secondColumn;
     private int endx;
+    private int scrollHeight;
+    private LinearLayout linearlayout;
 
     public WaterFullView(Context context) {
         super(context);
@@ -72,8 +77,10 @@ public class WaterFullView extends ScrollView implements View.OnTouchListener {
             isOneLoad=true;
             fristColumn = (LinearLayout) findViewById(R.id.frist_column);
             secondColumn = (LinearLayout) findViewById(R.id.second_column);
+            linearlayout = (LinearLayout) findViewById(R.id.linerlayout);
             //获取单列宽
             columnWidth = fristColumn.getWidth();
+            scrollHeight = getHeight();
             //加载图片
             loadImage();
         }
@@ -132,7 +139,7 @@ public class WaterFullView extends ScrollView implements View.OnTouchListener {
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 imageView.setPadding(5,5,5,5);
                 imageView.setTag(R.string.url,url);
-                //放倒最短的一列中
+                //放到最短的一列中
                 LinearLayout shortColumn = findShortColumn(scaleHeight, imageView);
                 shortColumn.addView(imageView);
                 iamgeViewList.add(imageView);
@@ -177,12 +184,29 @@ public class WaterFullView extends ScrollView implements View.OnTouchListener {
                 int diffx=Math.abs(endx-startx);
                 int diffy=Math.abs(endy-starty);
                 if(diffy>diffx&&endy<starty){
-                    isScrollFoot();
+                    mHandler.sendEmptyMessageDelayed(1,1000);
                 }
                 break;
         }
         return false;
     }
+    private int startScrolly;
+    private Handler mHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            int scrollY = getScrollY();
+            if(msg.what==1&&startScrolly==scrollY){//滑动停止
+                isScrollFoot();
+            }else {
+                startScrolly=scrollY;
+                mHandler.sendEmptyMessageDelayed(1,100);
+            }
+
+        }
+    };
+
+
     private void isScrollFoot(){
         int top=0;
         int bottom=0;
@@ -190,7 +214,7 @@ public class WaterFullView extends ScrollView implements View.OnTouchListener {
             top=(Integer)view.getTag(R.string.top);
             bottom=(Integer)view.getTag(R.string.bottom);
             int scrollY = getScrollY()+getHeight();
-            if(getScrollY()<bottom){
+            if(getScrollY()+scrollHeight>=linearlayout.getHeight()){
                 loadImage();
                 return;
             }

@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#aaa"
     tools:context="com.example.a328789.waterfull.MainActivity">
     <LinearLayout
+        android:id="@+id/linerlayout"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
